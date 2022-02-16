@@ -16,7 +16,8 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
-// const { rateLimit } = require('express-rate-limit');
+
+app.use(express.json({ limit: '50mb' }));
 
 /**
  * Connect to MongoDB
@@ -24,7 +25,10 @@ const mongoSanitize = require('express-mongo-sanitize');
 const db = Core.dbConnect();
 app.db = db;
 
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false,
+}));
 
 /**
  * Sanitize MongoDB request

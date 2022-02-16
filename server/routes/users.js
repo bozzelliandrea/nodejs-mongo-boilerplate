@@ -5,10 +5,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const config = require('config');
 const secretKey = config.get('security.secret');
-const bodyParser = require('body-parser');
 const UsersCtrl = require('../controllers/users');
-const jsonParser = bodyParser.json();
-const urlencodedParser = bodyParser.urlencoded({ extended: false });
 const isAdmin = require('../middlewares/middlewares').isAdmin;
 const isAuthenticated = require('../middlewares/middlewares').isAuthenticated;
 
@@ -92,7 +89,7 @@ module.exports = (app, express) => {
   *    }
   *
   */
-  usersApiRouter.post('/authenticate/:admin?', jsonParser, UsersCtrl.PostAuthenticate);
+  usersApiRouter.post('/authenticate/:admin?', UsersCtrl.PostAuthenticate);
 
   /**
   * @api {post} /register/ Register user
@@ -164,7 +161,7 @@ module.exports = (app, express) => {
   *      "message": "Passwords do not match"
   *    }
   */
-  usersApiRouter.post('/register', jsonParser, UsersCtrl.PostRegister);
+  usersApiRouter.post('/register', UsersCtrl.PostRegister);
 
   /**
   * @api {post} /activate/ Activate a user
@@ -190,7 +187,7 @@ module.exports = (app, express) => {
   *      "message": "Token expired or not valid"
   *    }
   */
-  usersApiRouter.post('/activate', jsonParser, UsersCtrl.PostActivate);
+  usersApiRouter.post('/activate', UsersCtrl.PostActivate);
 
   /**
   * @api {post} /password/forgot/ Forgot Password request
@@ -218,7 +215,7 @@ module.exports = (app, express) => {
   *      "message": "The email passed does not exists"
   *    }
   */
-  usersApiRouter.post('/password/forgot', jsonParser, UsersCtrl.PostForgotPassword);
+  usersApiRouter.post('/password/forgot', UsersCtrl.PostForgotPassword);
 
   /**
   * @api {post} /password/reset/ Reset password
@@ -253,13 +250,13 @@ module.exports = (app, express) => {
   *      "message": "The token passed is not valid"
   *    }
   */
-  usersApiRouter.post('/password/reset', jsonParser, UsersCtrl.PostPasswordReset);
+  usersApiRouter.post('/password/reset', UsersCtrl.PostPasswordReset);
 
   /*
    * FROM HERE EVERY CALL MUST BE AUTHENTICATED
   */
   // usersApiRouter middleware
-  usersApiRouter.use(jsonParser, isAuthenticated);
+  usersApiRouter.use(isAuthenticated);
 
   /**
   * @api {get} /logout/ Logout a user
@@ -388,7 +385,7 @@ module.exports = (app, express) => {
     *      "message": "Token not provided"
     *    }
     */
-    .post(urlencodedParser, isAdmin, UsersCtrl.PostUsers)
+    .post(isAdmin, UsersCtrl.PostUsers)
 
     /**
     * @api {get} /users/ Get the list of users
@@ -616,7 +613,7 @@ module.exports = (app, express) => {
     *    }
     *
     */
-    .patch(urlencodedParser, isAdmin, UsersCtrl.PatchUser)
+    .patch(isAdmin, UsersCtrl.PatchUser)
 
     /**
     * @api {delete} /users/:user_id Delete a user
@@ -663,7 +660,7 @@ module.exports = (app, express) => {
     */
     .delete(isAdmin, UsersCtrl.DeleteUser);
 
-  //usersApiRouter.post('/user/settings', jsonParser, UsersCtrl.PostUserSettings);
+  //usersApiRouter.post('/user/settings', UsersCtrl.PostUserSettings);
 
   /**
   * @api {get} /me/ Returns current user info
@@ -749,7 +746,7 @@ module.exports = (app, express) => {
   *      "message": "Cannot save this user"
   *    }
   */
-  usersApiRouter.patch('/me', jsonParser, UsersCtrl.PatchMe);
+  usersApiRouter.patch('/me', UsersCtrl.PatchMe);
   /**
   * @api {patch} /me/updatepwd/ Update current user password
   * @apiName UpdateUserPassword
@@ -803,7 +800,7 @@ module.exports = (app, express) => {
   *      "message": "The current password is not correct"
   *    }
   */
-  usersApiRouter.patch('/me/updatepwd', jsonParser, UsersCtrl.PatchMeUpdatePassword);
+  usersApiRouter.patch('/me/updatepwd', UsersCtrl.PatchMeUpdatePassword);
 
   return usersApiRouter;
 }
